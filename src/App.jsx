@@ -22,12 +22,12 @@ const App = () => {
             scrollbar-hide
           "
         >
-          <Tab to="/" label="Infinite List" />
+          <Tab to="/" label="Horizontal Scroll" />
           <Tab to="/friends" label="Friends" />
           <Tab to="/counter" label="Counter" />
           <Tab to="/users" label="Users" />
           <Tab to="/posts" label="Posts" />
-          <Tab to="/search" label="Search" />
+          <Tab to="/search" label="Debouncing-Search" />
         </div>
       </nav>
 

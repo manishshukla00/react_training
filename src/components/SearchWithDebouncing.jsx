@@ -8,15 +8,13 @@ const SearchWithDebouncing = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  /* 1️⃣ Fetch users ONCE */
   useEffect(() => {
     const fetchUsers = async () => {
       setLoading(true);
       try {
         const res = await fetch("https://jsonplaceholder.typicode.com/users");
         const data = await res.json();
-        setUsers(data);
-        setFilteredUsers(data);
+        setUsers(data); // ❗
       } catch (err) {
         setError("Failed to fetch users");
       } finally {
@@ -27,7 +25,6 @@ const SearchWithDebouncing = () => {
     fetchUsers();
   }, []);
 
-  /* 2️⃣ Debounce input */
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedValue(searchTerm);
@@ -36,11 +33,16 @@ const SearchWithDebouncing = () => {
     return () => clearTimeout(handler);
   }, [searchTerm]);
 
-  /* 3️⃣ Filter users */
   useEffect(() => {
+    if (debouncedValue.trim() === "") {
+      setFilteredUsers([]);
+      return;
+    }
+
     const result = users.filter((user) =>
       user.username.toLowerCase().includes(debouncedValue.toLowerCase()),
     );
+
     setFilteredUsers(result);
   }, [debouncedValue, users]);
 
@@ -50,7 +52,6 @@ const SearchWithDebouncing = () => {
         🔍 Search Users with Debouncing
       </h2>
 
-      {/* Search Input */}
       <input
         type="text"
         value={searchTerm}
@@ -65,13 +66,16 @@ const SearchWithDebouncing = () => {
         "
       />
 
-      {/* Status */}
-      {loading && <p className="text-blue-600">Loading...</p>}
+      {loading && <p className="text-blue-600">Loading users...</p>}
       {error && <p className="text-red-600">{error}</p>}
 
-      {/* Users List */}
-      <ul className="space-y-3">
-        {filteredUsers.length === 0 && !loading && (
+      {!loading && searchTerm === "" && (
+        <p className="text-gray-400 text-center">
+          Start typing to search users
+        </p>
+      )}
+      <ul className="space-y-3 mt-4">
+        {searchTerm !== "" && filteredUsers.length === 0 && !loading && (
           <p className="text-gray-500 text-center">No users found</p>
         )}
 
