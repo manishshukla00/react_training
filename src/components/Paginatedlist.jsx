@@ -1,5 +1,3 @@
-// https://jsonplaceholder.typicode.com/posts?_page=1&_limit=12
-// https://jsonplaceholder.typicode.com/todos
 import React, { useEffect, useState } from "react";
 
 const PaginatedList = ({ apiEndpoint, renderItem, itemsPerPage = 10 }) => {
@@ -7,8 +5,12 @@ const PaginatedList = ({ apiEndpoint, renderItem, itemsPerPage = 10 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
   useEffect(() => {
     const fetchItems = async () => {
+      setLoading(true);
+      setError("");
+
       try {
         const response = await fetch(
           `${apiEndpoint}?_page=${currentPage}&_limit=${itemsPerPage}`,
@@ -18,40 +20,80 @@ const PaginatedList = ({ apiEndpoint, renderItem, itemsPerPage = 10 }) => {
         }
         const data = await response.json();
         setItems(data);
-        setLoading(false);
       } catch (err) {
         setError(err.message);
+      } finally {
         setLoading(false);
       }
     };
+
     fetchItems();
   }, [apiEndpoint, currentPage, itemsPerPage]);
 
   const handleNextPage = () => {
-    setCurrentPage((prevPage) => prevPage + 1);
-  };
-  const handlePrevPage = () => {
-    setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+    setCurrentPage((prev) => prev + 1);
   };
 
-  if (loading) return <h3>Loading items...</h3>;
-  if (error) return <h3>Error: {error}</h3>;
+  const handlePrevPage = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  };
+
+  if (loading)
+    return (
+      <p className="text-center text-blue-600 font-medium">Loading items...</p>
+    );
+
+  if (error)
+    return (
+      <p className="text-center text-red-600 font-medium">Error: {error}</p>
+    );
+
   return (
-    <div>
-      <div>
+    <div className="max-w-4xl mx-auto p-4">
+      {/* Items */}
+      <div className="space-y-4">
         {items.map((item) => (
-          <div key={item.id}>{renderItem(item)}</div>
+          <div key={item.id} className="bg-white rounded-lg shadow p-4">
+            {renderItem(item)}
+          </div>
         ))}
       </div>
-      <div style={{ marginTop: "20px" }}>
+
+      {/* Pagination Controls */}
+      <div className="flex flex-col sm:flex-row justify-center items-center gap-3 mt-6">
         <button
           onClick={handlePrevPage}
           disabled={currentPage === 1}
-          style={{ marginRight: "10px" }}
+          className="
+            px-5 py-2
+            rounded-lg
+            bg-gray-200
+            text-gray-700
+            hover:bg-gray-300
+            disabled:opacity-50
+            disabled:cursor-not-allowed
+          "
         >
           Previous
         </button>
-        <button onClick={handleNextPage}>Next</button>
+
+        <span className="text-sm md:text-base font-medium">
+          Page {currentPage}
+        </span>
+
+        <button
+          onClick={handleNextPage}
+          className="
+            px-5 py-2
+            rounded-lg
+            bg-blue-600
+            text-white
+            hover:bg-blue-700
+            transition
+          "
+        >
+          Next
+        </button>
       </div>
     </div>
   );

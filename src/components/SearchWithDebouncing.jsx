@@ -45,26 +45,54 @@ const SearchWithDebouncing = () => {
   }, [debouncedValue, users]);
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>🔍 Search Users with Debouncing</h2>
+    <div className="max-w-3xl mx-auto p-4">
+      <h2 className="text-xl md:text-2xl font-semibold mb-4 text-center md:text-left">
+        🔍 Search Users with Debouncing
+      </h2>
 
+      {/* Search Input */}
       <input
         type="text"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         placeholder="Search by username..."
-        style={{ padding: "8px", width: "300px", marginBottom: "20px" }}
+        className="
+          w-full md:w-96
+          px-4 py-2
+          border rounded-lg
+          focus:outline-none focus:ring-2 focus:ring-blue-500
+          mb-4
+        "
       />
 
-      {loading && <p>Loading...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {/* Status */}
+      {loading && <p className="text-blue-600">Loading...</p>}
+      {error && <p className="text-red-600">{error}</p>}
 
-      <ul>
-        {filteredUsers.length === 0 && !loading && <p>No users found</p>}
+      {/* Users List */}
+      <ul className="space-y-3">
+        {filteredUsers.length === 0 && !loading && (
+          <p className="text-gray-500 text-center">No users found</p>
+        )}
 
         {filteredUsers.map((user) => (
-          <li key={user.id}>
-            {user.username} — {user.email}
+          <li
+            key={user.id}
+            className="
+              p-3
+              bg-white
+              rounded-lg
+              shadow
+              flex flex-col
+              sm:flex-row
+              sm:justify-between
+              sm:items-center
+            "
+          >
+            <span className="font-medium">{user.username}</span>
+            <span className="text-sm text-gray-600 break-all">
+              {user.email}
+            </span>
           </li>
         ))}
       </ul>
